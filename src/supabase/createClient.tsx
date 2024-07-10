@@ -1,6 +1,6 @@
 "use client";
 import { createClient } from "@supabase/supabase-js";
-import { useRef, useState } from "react";
+import { Database } from "../../database.types";
 
 // Add clerk to Window to avoid type errors
 declare global {
@@ -10,7 +10,7 @@ declare global {
 }
 
 function createClerkSupabaseClient() {
-  return createClient(
+  return createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_KEY!,
     {
