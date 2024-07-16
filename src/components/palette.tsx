@@ -16,7 +16,6 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { useClickOutside } from "@/hooks/use-click-outside";
-import { on } from "events";
 
 extend([namesPlugin]);
 
@@ -39,13 +38,12 @@ const Palette = ({
   };
 
   const colorName = handleColorName(colorInstance);
-
   const colorTextLuminance = handleColorTextClass(colorInstance);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-
   const [draggable, setDraggable] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [newColorPalette, setNewColorPalette] = useState<string[]>([]);
+  const router = useRouter();
 
   const handleHexToggle = (hex: string) => {
     if (lockedHexes.includes(hex)) {
@@ -57,7 +55,6 @@ const Palette = ({
 
   const handleSetColor = (color: string, index: number) => {
     const newColor = color.replace(/^#/, "");
-
     if (newColor) {
       const newColors = [...colors];
       newColors[index] = newColor;
@@ -66,14 +63,11 @@ const Palette = ({
     setColorInstance(color);
   };
 
-  const router = useRouter();
-
   const onClickOutside = () => {
     if (newColorPalette.length) {
       const newRoute = newColorPalette.join("-");
       router.replace(`/colors/${newRoute}`);
     }
-
     setShowColorPicker(false);
   };
 
@@ -109,17 +103,14 @@ const Palette = ({
         />
       )}
 
-      {showColorPicker ? (
+      {showColorPicker && (
         <div className="absolute p-2 z-50" ref={ref}>
-          {" "}
           <ReactGPicker
             onChange={(value) => handleSetColor(value, colorIndex)}
             value={colorInstance}
             format="hex"
           />
         </div>
-      ) : (
-        ""
       )}
 
       <div
@@ -130,23 +121,18 @@ const Palette = ({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              {" "}
               <h3
-                className={` text-xl  lg:text-[30px] uppercase font-semibold cursor-pointer text-left
-`}
+                className="text-xl lg:text-[30px] uppercase font-semibold cursor-pointer text-left"
                 onClick={() => setShowColorPicker(true)}
               >
                 {colorInstance.replace(/^#/, "")}
-
                 <br />
               </h3>
             </TooltipTrigger>
-
             <TooltipContent>Select color</TooltipContent>
           </Tooltip>
         </TooltipProvider>
-
-        <p className={`text-[11px] opacity-[0.5] capitalize inset-0 mt-[9px]`}>
+        <p className="text-[11px] opacity-[0.5] capitalize inset-0 mt-[9px]">
           ~{colorName}
         </p>
       </div>

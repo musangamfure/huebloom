@@ -5,22 +5,23 @@ import React, { useEffect } from "react";
 import randomColor from "randomcolor";
 
 const GeneratePage = () => {
-  const randomColorx = randomColor({
-    hue: "random",
-    luminosity: "random",
-    count: 5,
-  });
-
-  const routeParam = randomColorx
-    ?.map((color: string) => color.slice(1))
-    .join("-");
-
   const navigate = useRouter();
 
   useEffect(() => {
-    setTimeout(() => {
+    const randomColors = randomColor({
+      hue: "random",
+      luminosity: "random",
+      count: 5,
+    });
+
+    const routeParam = randomColors.map((color) => color.slice(1)).join("-");
+
+    const timer = setTimeout(() => {
       navigate.replace(`/colors/${routeParam}`);
     }, 3000);
+
+    // Clean up the timer on unmount
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   return (

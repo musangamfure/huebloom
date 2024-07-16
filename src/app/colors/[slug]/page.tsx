@@ -1,8 +1,6 @@
 "use client";
 import React, { KeyboardEvent, MouseEvent, useEffect, useState } from "react";
-
 import Palette from "@/components/palette";
-
 import { Reorder, animate } from "framer-motion";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { ViewDialog } from "@/components/quick-view-dialog";
@@ -38,10 +36,10 @@ const DynamicPage = ({ params }: { params: { slug: string } }) => {
       (e as KeyboardEvent<HTMLDivElement>).key !== " " &&
       (e as KeyboardEvent<HTMLDivElement>).key !== "Spacebar"
     ) {
-      return; // If it's a keydown event and key is not space, return without doing anything
+      return;
     }
 
-    //get five differnt color
+    // Generate five different colors
     const randomColors = Array.from({ length: 5 }, () =>
       randomColor({
         hue: "random",
@@ -49,18 +47,13 @@ const DynamicPage = ({ params }: { params: { slug: string } }) => {
       })
     );
 
-    const allColors = [...lockedHexes, ...randomColors];
+    const allColors = [...lockedHexes, ...randomColors].slice(0, 5);
 
-    console.log(allColors, "all colors");
-
-    if (allColors.length >= 5) {
-      const routeParam = allColors
-        .slice(0, 5)
-        .map((color) => color.replace("#", ""))
-        .join("-");
-      if (eventType === "keydown" || eventType === "click") {
-        navigate.replace(`/colors/${routeParam}`);
-      }
+    const routeParam = allColors
+      .map((color) => color.replace("#", ""))
+      .join("-");
+    if (eventType === "keydown" || eventType === "click") {
+      navigate.replace(`/colors/${routeParam}`);
     }
   };
 
@@ -71,13 +64,9 @@ const DynamicPage = ({ params }: { params: { slug: string } }) => {
   });
 
   useEffect(() => {
-    animate(
-      ".menuicon",
-
-      {
-        rotate: showSavedPalettes ? 90 : 0,
-      }
-    );
+    animate(".menuicon", {
+      rotate: showSavedPalettes ? 90 : 0,
+    });
   }, [showSavedPalettes]);
 
   return (
@@ -88,8 +77,7 @@ const DynamicPage = ({ params }: { params: { slug: string } }) => {
     >
       <div className="flex lg:absolute top-[4.1rem] z-50 bg-white justify-between items-center w-full p-2 border-b-2">
         <p className="opacity-[0.5] hidden lg:block">
-          {" "}
-          Press the space bar to generate a new color palettes.
+          Press the space bar to generate a new color palette.
         </p>
 
         <Button
@@ -103,7 +91,6 @@ const DynamicPage = ({ params }: { params: { slug: string } }) => {
           <ViewDialog colors={colorPalettes} />
           <SaveDialog colors={colorPalettes} />
           <ExportDialog targetRef={targetRef} handleExportPdf={toPDF} />
-
           <Button className="border-none" variant="outline">
             <MenuIcon
               className="menuicon"
@@ -118,21 +105,21 @@ const DynamicPage = ({ params }: { params: { slug: string } }) => {
         ref={targetRef}
         onReorder={setColorPalettes}
         axis={dynamicAxis}
-        className="flex lg:flex-row flex-col  w-full h-screen "
+        className="flex lg:flex-row flex-col w-full h-screen"
       >
         {colorPalettes.map((color: string, index: number) => (
           <Palette
             key={color}
             color={color}
             colorIndex={index}
-            colors={colors}
+            colors={colorPalettes}
             lockedHexes={lockedHexes}
             setLockedHexes={setLockedHexes}
           />
         ))}
-        {showSavedPalettes ? (
+        {showSavedPalettes && (
           <SavedPalettes setShowSavedPalettes={setShowSavedPalettes} />
-        ) : null}
+        )}
       </Reorder.Group>
     </div>
   );
